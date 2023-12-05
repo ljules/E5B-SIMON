@@ -1,8 +1,11 @@
 package com.example.springaventure.controller.admin
 
 
+import com.example.springaventure.model.dao.ArmureDao
 import com.example.springaventure.model.dao.TypeArmureDao
+import com.example.springaventure.model.entity.Armure
 import com.example.springaventure.model.entity.TypeArmure
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -14,7 +17,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 @Controller
 class TypeArmureControleur(
     /** DAO pour l'accès aux données des types d'armures. */
-    val typeArmureDao: TypeArmureDao
+    val typeArmureDao: TypeArmureDao,
+
+    /** DAO pour l'accès aux données des types d'armures. */
+    val Armure: ArmureDao,
 ) {
 
     /**
@@ -27,9 +33,16 @@ class TypeArmureControleur(
     fun index(model: Model): String {
         // Récupère tous les types d'armures depuis la base de données
         val typeArmures = this.typeArmureDao.findAll()
+
+        // Récupère le nombre d'armure pour chaque types d'armures depuis la base de données
+        var nbArmure = this.Armure.count()
+
         // Ajoute la liste des types d'armures au modèle pour transmission à la vue
         model.addAttribute("typeArmures", typeArmures)
-        return "admin/typeArmure/index"
+
+        // Ajoute le nombre d'armure de chaque type d'armures au modèle pour transmission à la vue
+        model.addAttribute("nbArmure", nbArmure)
+        return "admin/typearmure/index"
     }
 
     /**
@@ -43,7 +56,7 @@ class TypeArmureControleur(
     fun show(@PathVariable id: Long, model: Model): String {
         val typeArmure = this.typeArmureDao.findById(id).orElseThrow()
         model.addAttribute("typeArmure", typeArmure)
-        return "admin/typeArmure/show"
+        return "admin/typearmure/show"
     }
 
     /**
@@ -56,7 +69,7 @@ class TypeArmureControleur(
     fun create(model: Model): String {
         val nouvelleTypeArmure = TypeArmure(null, "", 1)
         model.addAttribute("nouvelleTypeArmure", nouvelleTypeArmure)
-        return "admin/typeArmure/create"
+        return "admin/typearmure/create"
     }
 
     /**
